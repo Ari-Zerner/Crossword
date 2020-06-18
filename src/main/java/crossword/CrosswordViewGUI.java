@@ -8,7 +8,8 @@ import static java.awt.event.KeyEvent.*;
 
 public class CrosswordViewGUI {
 
-  private static int POINTS_PER_INCH = 72;
+  private static final int POINTS_PER_INCH = 72;
+  private static final float NUMBER_SIZE_RATIO = 0.3f;
 
   private int squareSize; // pixels
   private int fontSize; // points
@@ -49,6 +50,17 @@ public class CrosswordViewGUI {
     fontSize = POINTS_PER_INCH / spi;
   }
 
+  private void drawNumber(int num) {
+    Font font = g.getFont();
+    g.setFont(font.deriveFont(font.getSize() * NUMBER_SIZE_RATIO));
+    String text = "" + num;
+    var fm = g.getFontMetrics();
+    int boxSize = (int) (squareSize * NUMBER_SIZE_RATIO);
+    int x = 0, y = fm.getAscent();
+    g.drawString(text, x, y);
+    g.setFont(font);
+  }
+
   private void drawEmpty(boolean isSelected) {
     if (isSelected) {
       g.setColor(new Color(0xB4D5FE)); // https://stackoverflow.com/questions/16094837/what-is-the-browser-default-background-color-when-selecting-text
@@ -85,6 +97,7 @@ public class CrosswordViewGUI {
         drawLetter(sq.getLetter(), isSelected);
         break;
     }
+    sq.getNumber().ifPresent(this::drawNumber);
   }
 
   private void drawCrossword(Graphics g) {
